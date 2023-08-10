@@ -187,3 +187,21 @@ variables:
 This prepends the Chocolatey bin directory to the PATH for all subsequent steps in the job.
 
 Try one or a combination of the above solutions and see if they help resolve the issue. If the problem persists, there might be other environmental factors at play that are specific to your Azure DevOps setup or agent configuration.
+
+
+
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- script: |
+    Invoke-WebRequest -Uri "https://awscli.amazonaws.com/AWSCLIV2.msi" -OutFile "AWSCLIV2.msi"
+    Start-Process msiexec.exe -Wait -ArgumentList '/i AWSCLIV2.msi /quiet'
+  displayName: 'Install AWS CLI'
+  
+- script: |
+    aws --version
+  displayName: 'Check AWS CLI Version'
