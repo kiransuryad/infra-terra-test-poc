@@ -52,6 +52,12 @@
 
 
 - script: |
+    "C:\Program Files\Amazon\AWSCLIV2\aws.exe" --version
+  displayName: 'Check AWS CLI Version'
+
+
+
+- script: |
     dir "$(modulePath)"
   displayName: 'List contents of modulePath for debugging'
 
