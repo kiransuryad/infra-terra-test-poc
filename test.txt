@@ -259,3 +259,10 @@ Copy code
 The condition: always() ensures the test results are published even if the Terratest run fails.
 
 With these changes, after your pipeline runs, you'll be able to see the Terratest results in the "Tests" tab of your Azure DevOps pipeline run. This gives you a more structured view of which tests passed or failed, along with any associated logs or error messages.
+
+
+
+- script: |
+    "C:\Program Files\Amazon\AWSCLIV2\aws.exe" --version
+  displayName: 'Check AWS CLI Version'
+
