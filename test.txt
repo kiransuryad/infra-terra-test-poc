@@ -11,3 +11,17 @@
   env:
     ChocolateyInstall: C:\ProgramData\chocolatey
 
+
+- powershell: |
+    # Download and install Chocolatey directly
+    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    
+    # Refresh environment variables to recognize choco
+    $env:Path = [System.Environment]::GetEnvironmentVariable('Path','Machine')
+    
+    # Now install Go and Terraform using choco
+    choco install golang -y
+    choco install terraform -y
+  displayName: 'Install Chocolatey and then Go and Terraform'
+
+
