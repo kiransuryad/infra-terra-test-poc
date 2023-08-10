@@ -86,3 +86,50 @@ FAIL	uktfsrmmg01.globalmanagement.support/tfs/DefaultDevCollection/POC0Team0Proj
 ##[error]Cmd.exe exited with code '1'.
 Finishing: Run Terratest
 
+
+
+Starting: Run Terratest
+==============================================================================
+Task         : Command line
+Description  : Run a command line script using Bash on Linux and macOS and cmd.exe on Windows
+Version      : 2.178.0
+Author       : Microsoft Corporation
+Help         : https://docs.microsoft.com/azure/devops/pipelines/tasks/utility/command-line
+==============================================================================
+Generating script.
+Script contents:
+"C:\Program Files\Go\bin\go.exe" test -v -timeout 30m
+========================== Starting Command Output ===========================
+"C:\WINDOWS\system32\cmd.exe" /D /E:ON /V:OFF /S /C "CALL "D:\TFS_BuildAgent\_work\_temp\dd029667-8d98-4114-a6ee-8f773c6e515d.cmd""
+=== RUN   TestTerraformVPC
+=== PAUSE TestTerraformVPC
+=== CONT  TestTerraformVPC
+TestTerraformVPC 2023-08-10T17:34:15+01:00 retry.go:91: terraform [init -upgrade=false -no-color]
+TestTerraformVPC 2023-08-10T17:34:15+01:00 logger.go:66: Running command terraform with args [init -upgrade=false -no-color]
+TestTerraformVPC 2023-08-10T17:34:15+01:00 retry.go:99: Returning due to fatal error: FatalError{Underlying: error while running command: exec: "terraform": executable file not found in %PATH%; }
+    apply.go:15: 
+        	Error Trace:	D:\TFS_BuildAgent\_work\45\src\infra-terratest-poc\infra-terratest-poc\tests\apply.go:15
+        	            				D:\TFS_BuildAgent\_work\45\src\infra-terratest-poc\infra-terratest-poc\tests\vpc_test.go:22
+        	Error:      	Received unexpected error:
+        	            	FatalError{Underlying: error while running command: exec: "terraform": executable file not found in %PATH%; }
+        	Test:       	TestTerraformVPC
+TestTerraformVPC 2023-08-10T17:34:15+01:00 retry.go:91: terraform [destroy -auto-approve -input=false -no-color -lock=false]
+TestTerraformVPC 2023-08-10T17:34:15+01:00 logger.go:66: Running command terraform with args [destroy -auto-approve -input=false -no-color -lock=false]
+TestTerraformVPC 2023-08-10T17:34:15+01:00 retry.go:99: Returning due to fatal error: FatalError{Underlying: error while running command: exec: "terraform": executable file not found in %PATH%; }
+    destroy.go:11: 
+        	Error Trace:	D:\TFS_BuildAgent\_work\45\src\infra-terratest-poc\infra-terratest-poc\tests\destroy.go:11
+        	            				D:\TFS_BuildAgent\_work\45\src\infra-terratest-poc\infra-terratest-poc\tests\panic.go:523
+        	            				D:\TFS_BuildAgent\_work\45\src\infra-terratest-poc\infra-terratest-poc\tests\testing.go:999
+        	            				D:\TFS_BuildAgent\_work\45\src\infra-terratest-poc\infra-terratest-poc\tests\apply.go:15
+        	            				D:\TFS_BuildAgent\_work\45\src\infra-terratest-poc\infra-terratest-poc\tests\vpc_test.go:22
+        	Error:      	Received unexpected error:
+        	            	FatalError{Underlying: error while running command: exec: "terraform": executable file not found in %PATH%; }
+        	Test:       	TestTerraformVPC
+--- FAIL: TestTerraformVPC (0.00s)
+FAIL
+exit status 1
+FAIL	uktfsrmmg01.globalmanagement.support/tfs/DefaultDevCollection/POC0Team0Project/_git/poc_gir_repo/infra-terratest-poc/tests	2.524s
+##[error]Cmd.exe exited with code '1'.
+Finishing: Run Terratest
+
+
