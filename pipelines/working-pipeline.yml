@@ -1,0 +1,92 @@
+trigger:
+- main
+
+pool:
+  name: UKTFSBLDDEV02
+
+variables:
+  GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace
+  GOBIN:  '$(GOPATH)/bin'                            # Go bin directory
+  modulePath: '$(system.defaultWorkingDirectory)'    # Updated to match your source code path
+
+stages:
+- stage: TestTerraform
+  jobs:
+  - job: RunTerratest
+    steps:
+
+    - powershell: |
+        # Download and install Chocolatey directly
+        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    
+        # Refresh environment variables to recognize choco
+        $env:Path = [System.Environment]::GetEnvironmentVariable('Path','Machine')
+    
+        # Now install Go and Terraform using choco
+        choco install golang -y
+        choco install terraform -y
+      displayName: 'Install Chocolatey and then Go and Terraform'
+
+
+    - powershell: |
+        New-Item -Path '$(GOBIN)' -ItemType Directory -Force
+        New-Item -Path '$(modulePath)' -ItemType Directory -Force
+        Write-Host "##vso[task.prependpath]$(GOBIN)"
+        Write-Host "##vso[task.prependpath]C:\Program Files\Go\bin"
+      displayName: 'Set up the Go workspace'
+
+    - checkout: self
+      path: 'src/infra-terratest-poc' # Aligns with the Go workspace structure and modulePath
+
+
+    - script: |
+        echo %PATH%
+        "C:\Program Files\Go\bin\go.exe" version
+        "C:\Program Files\Go\bin\go.exe" env
+      displayName: 'Verify Go Installation'
+
+    - script: |
+        echo '##vso[task.prependpath]C:\ProgramData\chocolatey\bin'
+      displayName: 'Add Terraform to PATH'
+
+
+    - script: |
+        dir "$(modulePath)/infra-terratest-poc"
+      displayName: 'List contents of modulePath for debugging'
+
+
+    - script: |
+        go mod init uktfsrmmg01.globalmanagement.support/tfs/DefaultDevCollection/POC%20Team%20Project/_git/poc_gir_repo/infra-terratest-poc/tests
+      workingDirectory: $(modulePath)/infra-terratest-poc/tests
+      displayName: 'Initialize Go module'
+
+    - script: |
+        "C:\Program Files\Go\bin\go.exe" get -v -t -d ./...
+        IF ERRORLEVEL 1 EXIT /B 1
+      workingDirectory: $(modulePath)/infra-terratest-poc/tests
+      displayName: 'Get dependencies, using go get'
+
+    - script: |
+        dir C:\ProgramData\chocolatey\bin
+      displayName: 'List Chocolatey bin directory'
+
+    - script: |
+        echo '##vso[task.prependpath]C:\ProgramData\chocolatey\bin'
+      displayName: 'Adding terraform to path'
+
+    - script: |
+        dir C:\ProgramData\chocolatey\bin
+      displayName: 'List Chocolatey bin directory 002'
+
+    - script: |
+        echo %PATH%
+      displayName: 'List PATH'
+
+    - script: |
+        echo '##vso[task.prependpath]C:\ProgramData\chocolatey\bin'
+        "C:\Program Files\Go\bin\go.exe" test -v -timeout 30m
+      env:
+        AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
+        AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+      workingDirectory: $(modulePath)/infra-terratest-poc/tests
+      displayName: 'Run Terratest'
