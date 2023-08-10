@@ -40,5 +40,14 @@
   displayName: 'Verify Go Installation'
 
 
+- script: |
+    dir "$(modulePath)"
+  displayName: 'List contents of modulePath for debugging'
+
+- script: |
+    go get -v -t -d ./...
+    IF ERRORLEVEL 1 EXIT /B 1
+  workingDirectory: $(modulePath)/tests
+  displayName: 'Get dependencies, using go get'
 
 
