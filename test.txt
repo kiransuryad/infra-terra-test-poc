@@ -66,3 +66,13 @@
   workingDirectory: $(modulePath)/tests
   displayName: 'Get dependencies, using go get'
 
+
+
+
+- script: |
+    go test -v -timeout 30m
+  env:
+    AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
+    AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+  workingDirectory: $(modulePath)/tests
+  displayName: 'Run Terratest'
