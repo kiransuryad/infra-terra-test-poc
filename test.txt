@@ -25,3 +25,12 @@
   displayName: 'Install Chocolatey and then Go and Terraform'
 
 
+- powershell: |
+    New-Item -Path '$(GOBIN)' -ItemType Directory -Force
+    New-Item -Path '$(modulePath)' -ItemType Directory -Force
+    Write-Host "##vso[task.prependpath]$(GOBIN)"
+    Write-Host "##vso[task.prependpath]$(GOROOT)/bin"
+  displayName: 'Set up the Go workspace'
+
+
+
