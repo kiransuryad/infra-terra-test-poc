@@ -1,0 +1,56 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace
+  GOBIN:  '$(GOPATH)/bin'                            # Go bin directory
+  modulePath: '$(GOPATH)/src/github.com/yourname/yourrepo' # Replace with your module path
+
+stages:
+- stage: TestTerraform
+  jobs:
+  - job: RunTerratest
+    steps:
+    - powershell: |
+        # Install Chocolatey
+        Set-ExecutionPolicy Bypass -Scope Process -Force;
+        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;
+        iex ((Invoke-WebRequest -Uri https://chocolatey.org/install.ps1).Content)
+      displayName: 'Install Chocolatey using PowerShell'
+
+    - script: |
+        choco install golang -y
+        choco install terraform -y
+      displayName: 'Install Go and Terraform using Chocolatey'
+
+    - script: |
+        mkdir -p '$(GOBIN)'
+        mkdir -p '$(modulePath)'
+        echo '##vso[task.prependpath]$(GOBIN)'
+        echo '##vso[task.prependpath]$(GOROOT)/bin'
+      displayName: 'Set up the Go workspace'
+
+    - checkout: self
+      path: '$(modulePath)'
+
+    - script: |
+        go version
+        go env
+      workingDirectory: $(modulePath)/tests
+      displayName: 'Verify Go Installation'
+
+    - script: |
+        go get -v -t -d ./...
+        if [ $? -ne 0 ]; then
+          exit 1
+        fi
+      workingDirectory: $(modulePath)/tests
+      displayName: 'Get dependencies, using go get'
+
+    - script: |
+        go test -v -timeout 30m
+      workingDirectory: $(modulePath)/tests
+      displayName: 'Run Terratest'
