@@ -76,3 +76,13 @@
     AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
   workingDirectory: $(modulePath)/tests
   displayName: 'Run Terratest'
+
+
+"C:\WINDOWS\system32\cmd.exe" /D /E:ON /V:OFF /S /C "CALL "D:\TFS_BuildAgent\_work\_temp\fd11881b-287d-49e0-857d-2d2f4219c3af.cmd""
+# uktfsrmmg01.globalmanagement.support/tfs/DefaultDevCollection/POC0Team0Project/_git/poc_gir_repo/infra-terratest-poc/tests [uktfsrmmg01.globalmanagement.support/tfs/DefaultDevCollection/POC0Team0Project/_git/poc_gir_repo/infra-terratest-poc/tests.test]
+.\vpc_test.go:5:2: "strings" imported and not used
+.\vpc_test.go:26:17: cannot use initAndApply (variable of type string) as bool value in argument to assert.True
+FAIL	uktfsrmmg01.globalmanagement.support/tfs/DefaultDevCollection/POC0Team0Project/_git/poc_gir_repo/infra-terratest-poc/tests [build failed]
+##[error]Cmd.exe exited with code '1'.
+Finishing: Run Terratest
+
