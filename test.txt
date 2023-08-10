@@ -205,3 +205,51 @@ steps:
 - script: |
     aws --version
   displayName: 'Check AWS CLI Version'
+
+
+
+To generate a report using go-junit-report for your Terratest cases in the provided Azure DevOps pipeline, you should:
+
+Install go-junit-report.
+Update your Terratest command to produce the JUnit XML report.
+Publish the JUnit report in Azure DevOps.
+Let's break down these steps and integrate them into your pipeline:
+
+1. Install go-junit-report:
+Add a step after your go get dependencies step to install go-junit-report:
+
+yaml
+Copy code
+- script: |
+    go get -u github.com/jstemmer/go-junit-report
+  displayName: 'Install go-junit-report'
+2. Update Terratest Command:
+Modify your Terratest run command to generate the JUnit XML report. We'll save the standard go test output to a file, then use go-junit-report to convert that file to the JUnit format:
+
+yaml
+Copy code
+- script: |
+    echo '##vso[task.prependpath]C:\ProgramData\chocolatey\bin'
+    "C:\Program Files\Go\bin\go.exe" test -v -timeout 30m ./... 2>&1 | tee test-output.txt
+    "C:\Program Files\Go\bin\go-junit-report" < test-output.txt > report.xml
+  env:
+    AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
+    AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+  workingDirectory: $(modulePath)/infra-terratest-poc/tests
+  displayName: 'Run Terratest and generate report'
+Here, we're using the tee command to both display the test results in the pipeline logs and save them to a file named test-output.txt. We then process this file using go-junit-report to generate the report.xml file.
+
+3. Publish the JUnit Report:
+After the Terratest run, add a step to publish the JUnit report to Azure DevOps:
+
+yaml
+Copy code
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '$(modulePath)/infra-terratest-poc/tests/report.xml'
+  condition: always()
+  displayName: 'Publish Test Results'
+The condition: always() ensures the test results are published even if the Terratest run fails.
+
+With these changes, after your pipeline runs, you'll be able to see the Terratest results in the "Tests" tab of your Azure DevOps pipeline run. This gives you a more structured view of which tests passed or failed, along with any associated logs or error messages.
