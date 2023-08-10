@@ -7,7 +7,7 @@ pool:
 variables:
   GOPATH: '$(system.defaultWorkingDirectory)/gopath' # Go workspace
   GOBIN:  '$(GOPATH)/bin'                            # Go bin directory
-  modulePath: '$(GOPATH)/src/github.com/yourname/yourrepo' # Replace with your module path
+  modulePath: '$(GOPATH)/src/infra-terratest-poc'    # Updated to match your source code path
 
 stages:
 - stage: TestTerraform
@@ -34,7 +34,7 @@ stages:
       displayName: 'Set up the Go workspace'
 
     - checkout: self
-      path: '$(modulePath)'
+      path: 'src/infra-terratest-poc' # Aligns with the Go workspace structure and modulePath
 
     - script: |
         go version
