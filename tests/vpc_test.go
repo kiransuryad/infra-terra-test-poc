@@ -2,7 +2,6 @@ package test
 
 import (
 	"testing"
-	"strings"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
 )
@@ -12,18 +11,28 @@ func TestTerraformVPC(t *testing.T) {
 
 	terraformOptions := &terraform.Options{
 		TerraformDir: "../infrastructure",
-		
-		// Disable colors in Terraform commands so its easier to parse stdout/stderr
-		NoColor: true,
+		NoColor: true,  // Disable colors in Terraform commands
 	}
 
 	defer terraform.Destroy(t, terraformOptions)
 
 	// Deploy the infrastructure with Terraform
-	initAndApply := terraform.InitAndApply(t, terraformOptions)
+	terraform.InitAndApply(t, terraformOptions)
 
-	// Asserts to make sure the resources are created successfully
-	assert.True(t, initAndApply)
+	// Fetch the VPC ID and tags from Terraform outputs
+	vpcID := terraform.Output(t, terraformOptions, "vpc_id")
+	vpcTags := terraform.OutputMap(t, terraformOptions, "vpc_tags")
 
-	// You can add more assertions based on outputs or any other logic
+	// Assert that the VPC ID is not empty, implying it has been created
+	assert.NotEmpty(t, vpcID, "VPC ID should not be empty")
+
+	// Assert that the VPC has a specific tag. For example, a tag "Name" with value "MyVPC".
+	expectedVPCName := "MyVPC"
+	if vpcName, exists := vpcTags["Name"]; exists {
+	    assert.Equal(t, expectedVPCName, vpcName)
+	} else {
+	    assert.Fail(t, "Tag 'Name' not found in VPC tags")
+	}
+
+	// Additional assertions can be added based on other tags or outputs as required
 }
