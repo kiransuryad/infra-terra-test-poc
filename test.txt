@@ -33,4 +33,12 @@
   displayName: 'Set up the Go workspace'
 
 
+- script: |
+    echo %PATH%
+    "C:\Program Files\Go\bin\go.exe" version
+    "C:\Program Files\Go\bin\go.exe" env
+  displayName: 'Verify Go Installation'
+
+
+
 
