@@ -133,3 +133,6 @@ FAIL	uktfsrmmg01.globalmanagement.support/tfs/DefaultDevCollection/POC0Team0Proj
 Finishing: Run Terratest
 
 
+- script: |
+    echo '##vso[task.prependpath]C:\ProgramData\chocolatey\bin'
+  displayName: 'Add Terraform to PATH'
