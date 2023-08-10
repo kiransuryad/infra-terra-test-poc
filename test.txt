@@ -279,3 +279,7 @@ With these changes, after your pipeline runs, you'll be able to see the Terrates
     # List all objects in the specified S3 bucket
     Get-S3Object -BucketName $BucketName | ForEach-Object { Write-Output $_.Key }
   displayName: 'List S3 Objects using PowerShell'
+
+
+
+Get-S3Bucket | ForEach-Object { Write-Output $_.BucketName }
