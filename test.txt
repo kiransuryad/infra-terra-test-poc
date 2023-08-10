@@ -136,3 +136,54 @@ Finishing: Run Terratest
 - script: |
     echo '##vso[task.prependpath]C:\ProgramData\chocolatey\bin'
   displayName: 'Add Terraform to PATH'
+
+
+
+
+Verify the Terraform Installation Path:
+Before running Terratest, let's check if Terraform is indeed installed in the expected directory.
+
+Add this step to your pipeline:
+
+yaml
+Copy code
+- script: |
+    dir C:\ProgramData\chocolatey\bin
+  displayName: 'List Chocolatey bin directory'
+This will list the contents of the Chocolatey bin directory. Check the output to ensure terraform.exe is present.
+
+2. Use Absolute Path in Terratest:
+As a workaround, if you know the absolute path to terraform.exe, you can specify that in the Terratest code.
+
+Modify the terraformOptions in your test:
+
+go
+Copy code
+terraformOptions := &terraform.Options{
+    TerraformDir: "../infrastructure",
+    TerraformBinary: "C:\\ProgramData\\chocolatey\\bin\\terraform.exe",
+    NoColor: true,
+}
+The TerraformBinary option allows you to specify the path to the terraform binary. By providing an absolute path, you ensure Terratest doesn't rely on the system's PATH to find Terraform.
+
+3. Reinstall Terraform:
+Another approach would be to reinstall Terraform. Perhaps there was an issue with the initial installation.
+
+yaml
+Copy code
+- script: |
+    choco uninstall terraform -y
+    choco install terraform -y
+  displayName: 'Reinstall Terraform using Chocolatey'
+After reinstalling, try running Terratest again.
+
+4. Set Terraform Path for the Entire Job:
+It's possible that the PATH modification isn't persistent across steps. You can try setting the PATH environment variable for the entire job:
+
+yaml
+Copy code
+variables:
+  PATH: 'C:\ProgramData\chocolatey\bin;$(PATH)'
+This prepends the Chocolatey bin directory to the PATH for all subsequent steps in the job.
+
+Try one or a combination of the above solutions and see if they help resolve the issue. If the problem persists, there might be other environmental factors at play that are specific to your Azure DevOps setup or agent configuration.
