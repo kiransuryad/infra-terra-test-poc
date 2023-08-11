@@ -309,3 +309,25 @@ The '<' operator is reserved for future use.
   workingDirectory: $(modulePath)/infra-terratest-poc/tests
   displayName: 'Run Terratest and generate report using PowerShell'
 
+
+
+- powershell: |
+    # Install go-junit-report
+    & "C:\Program Files\Go\bin\go.exe" get -u github.com/jstemmer/go-junit-report
+
+    # Run Terratest
+    echo '##vso[task.prependpath]C:\ProgramData\chocolatey\bin'
+    & "C:\Program Files\Go\bin\go.exe" test -v -timeout 30m ./... 2>&1 | Out-File -FilePath test-output.txt
+    Get-Content -Path test-output.txt
+
+    # Generate JUnit report
+    $content = Get-Content -Raw -Path test-output.txt
+    $report = & "$(GOBIN)\go-junit-report.exe" $content
+    $report | Out-File -FilePath report.xml
+  env:
+    AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
+    AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+  workingDirectory: $(modulePath)/infra-terratest-poc/tests
+  displayName: 'Run Terratest, Install go-junit-report and generate report'
+
+
